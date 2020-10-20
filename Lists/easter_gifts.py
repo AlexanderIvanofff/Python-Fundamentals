@@ -1,28 +1,49 @@
 gifts = input().split()
 
+
+def get_out_of_stock(items):
+    gift = tokens[1]
+
+    for index in range(len(items)):
+        if gift in items[index]:
+            items.pop(index)
+            items.insert(index, str(None))
+
+
+def get_requaried(items):
+    gift = tokens[1]
+    index = int(tokens[2])
+
+    if index in range(len(items)):
+        items.pop(index)
+        items.insert(index, str(gift))
+
+
+def get_just_in_case(items):
+    gift = tokens[1]
+    for index in range(len(items)):
+        items.pop(-1)
+        items.append(gift)
+
+
 while True:
     command = input()
     if command == 'No Money':
         break
+
     tokens = command.split()
+    instructions = tokens[0]
 
-    type_of_command = tokens[0]
-    gift = tokens[1]
+    if instructions == 'OutOfStock':
+        get_out_of_stock(gifts)
 
-    if type_of_command == 'OutOfStock':
-        for index, current_gift in enumerate(gifts):
-            if current_gift == gift:
-                gifts[index] = 'None'
+    elif instructions == 'Required':
+        get_requaried(gifts)
 
-    elif type_of_command == 'Required':
-        index = int(tokens[2])
-        if 0 <= index <= len(gifts):
-            gifts[index] = gift
+    elif instructions == 'JustInCase':
+        get_just_in_case(gifts)
 
-    elif type_of_command == 'JustInCase':
-        gifts[-1] = gift
 
-while 'None' in gifts:
-    gifts.remove('None')
+final = [x for x in gifts if x != 'None']
 
-print(' '.join(gifts))
+print(f'{" ".join(final)}')
