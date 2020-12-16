@@ -1,38 +1,69 @@
+def rate(plant_dict, current_name, current_rating):
+    if current_name in plant_dict:
+        plant_dict[current_name]["Rating"].append(current_rating)
+    else:
+        print('error')
+    return plant_dict
+
+
+def update(plant_dict, current_name, n_rarity):
+    if current_name in plant_dict:
+        plant_dict[current_name]["Rarity"] = n_rarity
+    else:
+        print('error')
+    return plant_dict
+
+
+def reset(plant_dict, current_name):
+    if current_name in plant_dict:
+        plant_dict[current_name]["Rating"].clear()
+    else:
+        print('error')
+    return plant_dict
+
+
+n = int(input())
+plant_discovery = {}
+
+for _ in range(n):
+    data = input().split('<->')
+
+    name = data[0]
+    current_rarity = int(data[1])
+
+    plant_discovery[name] = {'Rarity': current_rarity, 'Rating': []}
+
+
 command = input()
 
-heroes = {}
-while not command == 'End':
-    tokens = command.split()
-    instruction = tokens[0]
-    hero_name = tokens[1]
+while not command == 'Exhibition':
+    data = command.split(': ')
 
-    if instruction == 'Enroll':
-        if hero_name in heroes.keys():
-            print(f'{hero_name} is already exist.')
-        heroes[hero_name] = []
+    instructions = data[0]
+    tokens = data[1].split(' - ')
 
-    elif instruction == 'Learn':
-        spell_name = tokens[2]
+    if instructions == 'Rate':
+        plant_name = tokens[0]
+        rating = int(tokens[1])
+        plant_discovery = rate(plant_discovery, plant_name, rating)
 
-        if hero_name not in heroes.keys():
-            print(f"{hero_name} does't exist.")
+    elif instructions == 'Update':
+        plant_name = tokens[0]
+        new_rarity = int(tokens[1])
+        plant_discovery = update(plant_discovery, plant_name, new_rarity)
 
-        elif spell_name in heroes[hero_name]:
-            print(f'{hero_name} has already learn.')
-        else:
-            heroes[hero_name].append(spell_name)
-
-    elif instruction == 'Unlearn':
-        spell_name = tokens[2]
-        if hero_name not in heroes.keys():
-            print(f"{hero_name} does't exist.")
-        elif spell_name not in heroes[hero_name]:
-            print(f"{hero_name} does't know {spell_name}")
-        else:
-            heroes[hero_name].remove(spell_name)
+    elif instructions == 'Reset':
+        plant_name = tokens[0]
+        plant_discovery = reset(plant_discovery, plant_name)
 
     command = input()
-print(f"Heroes:")
-for hero, spells in sorted(heroes.items(), key=lambda x: (-len(x[1]), x[0])):
-    print(f'== {hero}:', end=' ')
-    print(', '.join(spells))
+
+for kay, value in plant_discovery.items():
+    if not len(value["Rating"]) == 0:
+        plant_discovery[kay]["Rating"] = sum(plant_discovery[kay]['Rating']) / len(plant_discovery[kay]["Rating"])
+    else:
+        plant_discovery[kay]["Rating"] = 0
+
+print("Plants for the exhibition:")
+for kay, value in sorted(plant_discovery.items(), key=lambda x: (-x[1]['Rarity'], -x[1]["Rating"])):
+    print(f"- {kay}; Rarity: {value['Rarity']}; Rating: {value['Rating']:.2f}")
